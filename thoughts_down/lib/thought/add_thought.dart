@@ -1,16 +1,14 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class ThoughtsEditHomePage extends StatelessWidget {
-  ThoughtsEditHomePage({Key? key}) : super(key: key);
-  int _selectedIndex = 0;
+  const ThoughtsEditHomePage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
           title: Row(
-        children: [
+        children: const [
           // IconButton(
           //     onPressed: () => Navigator.pushNamed(context, "/"),
           //     icon: const Icon(Icons.arrow_back_sharp)),
@@ -19,7 +17,7 @@ class ThoughtsEditHomePage extends StatelessWidget {
       )),
       body: Row(
         children: [
-          TextField(
+          const TextField(
             decoration: InputDecoration(
               border: OutlineInputBorder(),
               hintText: 'Enter a search term',
