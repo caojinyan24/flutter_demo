@@ -38,9 +38,9 @@ class ThoughtsDownApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const ThoughtsDownHomePage(),
+      // home: const ThoughtsDownHomePage(),
       routes: {
-        '/home': (context) => const ThoughtsDownHomePage(),
+        '/': (context) => const ThoughtsDownHomePage(),
         '/thoughtsEdit': (context) => ThoughtsEditHomePage(),
       },
     );
@@ -79,10 +79,10 @@ class _ThoughtsDownHomePageState extends State<ThoughtsDownHomePage> {
     // than having to individually change instances of widgets.
     return Scaffold(
       appBar: AppBar(
-          // Here we take the value from the MyHomePage object that was created by
-          // the App.build method, and use it to set our appbar title.
-          // title: Text(widget.title),
-          ),
+        // Here we take the value from the MyHomePage object that was created by
+        // the App.build method, and use it to set our appbar title.
+        title: const Text("thoughts down"),
+      ),
       body: const ThoughtsDisplayPage(),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,

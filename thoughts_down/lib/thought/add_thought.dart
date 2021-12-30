@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:thoughts_down/thought/thought.dart';
 
 class ThoughtsEditHomePage extends StatelessWidget {
   const ThoughtsEditHomePage({Key? key}) : super(key: key);
@@ -9,42 +10,65 @@ class ThoughtsEditHomePage extends StatelessWidget {
       appBar: AppBar(
           title: Row(
         children: const [
-          // IconButton(
-          //     onPressed: () => Navigator.pushNamed(context, "/"),
-          //     icon: const Icon(Icons.arrow_back_sharp)),
           Text("thoughts edit"),
         ],
       )),
-      body: Row(
-        children: [
-          const TextField(
-            decoration: InputDecoration(
-              border: OutlineInputBorder(),
-              hintText: 'Enter a search term',
-            ),
+      body: const ThoughtsEditState(),
+    );
+  }
+}
+
+class ThoughtsEditState extends StatefulWidget {
+  const ThoughtsEditState({Key? key}) : super(key: key);
+
+  @override
+  _ThoughtsEditState createState() => _ThoughtsEditState();
+}
+
+class _ThoughtsEditState extends State<ThoughtsEditState> {
+  final _controller = TextEditingController();
+  String textInput = "";
+
+  @override
+  void initState() {
+    super.initState();
+    _controller.addListener(() {
+      setState(() {
+        textInput = _controller.text;
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        TextField(
+          decoration: const InputDecoration(
+            border: OutlineInputBorder(),
           ),
-          IconButton(
-              onPressed: _submitThoughtsData, icon: const Icon(Icons.forward))
-        ],
-      ),
-      // bottomNavigationBar: BottomNavigationBar(
-      //   currentIndex: _selectedIndex,
-      //   onTap: _onItemTapped,
-      //   items: const [
-      //     BottomNavigationBarItem(
-      //         icon: Icon(Icons.airplay),
-      //         label: "Thoughts",
-      //         backgroundColor: Colors.blue),
-      //     BottomNavigationBarItem(
-      //         icon: Icon(Icons.access_alarm),
-      //         label: "ToDos",
-      //         backgroundColor: Colors.blue),
-      //   ],
-      // ),
+          controller: _controller,
+        ),
+        ElevatedButton(
+          child: const Text("Done!"),
+          onPressed: _submitThoughtsData,
+        ),
+      ],
     );
   }
 
   void _submitThoughtsData() {
-
+    //TODO： 这里需要做成只能提交一次，提交后返回到首页
+    setState(() {
+        savedThoughts
+            .add(Thought(createTime: DateTime.now(), text: _controller.text));
+    });
+    Navigator.pop(context);
   }
 }
