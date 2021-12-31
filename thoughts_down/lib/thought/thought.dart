@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:thoughts_down/persist/db_model.dart';
+import 'package:thoughts_down/common/variable.dart';
 
-List<Thought> savedThoughts = [];
+List<Thought> savedThoughts =[];
 
 class ThoughtsDisplayPage extends StatefulWidget {
   const ThoughtsDisplayPage({Key? key}) : super(key: key);
@@ -13,6 +15,9 @@ class _ThoughtsDisplayPage extends State<ThoughtsDisplayPage>
     with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
+    savedThoughts = getAllThoughtsFromDb();
+    print("saved thoughts=");
+    print(savedThoughts);
     return Row(
       children: [
         Flexible(
@@ -26,7 +31,26 @@ class _ThoughtsDisplayPage extends State<ThoughtsDisplayPage>
       ],
     );
   }
+
+  List<Thought> getAllThoughtsFromDb() {
+    List<Thought> result=[] ;
+    final Future<List<ThoughtModel>> thoughts = sqfliteInstance.thoughts();
+    print("future thoughts=");
+    print(thoughts.toString());
+    thoughts.then((value) => {
+      for (ThoughtModel item in value){
+        print("item.text="+item.text),
+        result.add(Thought(createTime: item.createTime, text: item.text)),
+        print("after insert="+item.text),
+
+      }
+    });
+    print("result=");
+    print(result);
+    return result;
+  }
 }
+
 
 class Thought extends StatelessWidget {
   const Thought({
@@ -34,16 +58,8 @@ class Thought extends StatelessWidget {
     required this.text,
     Key? key,
   }) : super(key: key);
-
   final String text;
-  final DateTime createTime;
-
-  Map<String, dynamic> toMap() {
-    return {
-      'create_time': createTime,
-      'text': text,
-    };
-  }
+  final String createTime;
 
   @override
   Widget build(BuildContext context) {
@@ -52,21 +68,21 @@ class Thought extends StatelessWidget {
         // const Divider(height: 10.0),
         Expanded(
             child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(convertTime(createTime)),
-            Container(
-              margin: const EdgeInsets.only(top: 5),
-              child: Text(
-                text,
-                style: const TextStyle(
-                    color: Colors.blue,
-                    fontStyle: FontStyle.normal,
-                    fontSize: 20),
-              ),
-            )
-          ],
-        )),
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(createTime),
+                Container(
+                  margin: const EdgeInsets.only(top: 5),
+                  child: Text(
+                    text,
+                    style: const TextStyle(
+                        color: Colors.blue,
+                        fontStyle: FontStyle.normal,
+                        fontSize: 20),
+                  ),
+                )
+              ],
+            )),
       ],
     );
   }

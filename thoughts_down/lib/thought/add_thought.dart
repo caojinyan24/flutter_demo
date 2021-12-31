@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:thoughts_down/thought/thought.dart';
+import 'package:thoughts_down/common/variable.dart';
+import 'package:thoughts_down/persist/db_model.dart';
 
 class ThoughtsEditHomePage extends StatelessWidget {
   const ThoughtsEditHomePage({Key? key}) : super(key: key);
@@ -64,10 +66,17 @@ class _ThoughtsEditState extends State<ThoughtsEditState> {
   }
 
   void _submitThoughtsData() {
-    //TODO： 这里需要做成只能提交一次，提交后返回到首页
     setState(() {
-        savedThoughts
-            .add(Thought(createTime: DateTime.now(), text: _controller.text));
+      ThoughtModel thought =
+          ThoughtModel(DateTime.now().toIso8601String(), _controller.text);
+      savedThoughts.add(Thought(
+          createTime: DateTime.now().toIso8601String(),
+          text: _controller.text));
+      Future<int> count = sqfliteInstance.insertThought(thought);
+      print("begin to insert");
+      var insertedCount = 0;
+      count.then((value) => insertedCount);
+      print(insertedCount);
     });
     Navigator.pop(context);
   }

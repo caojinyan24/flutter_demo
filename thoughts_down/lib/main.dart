@@ -1,8 +1,14 @@
 import 'package:flutter/material.dart';
 import 'thought/thought.dart';
 import 'thought/add_thought.dart';
+import 'package:path/path.dart';
+import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
+import 'package:sqflite/sqflite.dart';
+import 'package:thoughts_down/thought/thought.dart';
+import 'dart:async';
 
+// Future<Database> _database;
 void main() {
   runApp(const ThoughtsDownApp());
 }
@@ -33,6 +39,7 @@ class ThoughtsDownApp extends StatelessWidget {
     //             '/thoughtsEdit': (context) => ThoughtsEditHomePage(),
     //           }));
     // }
+
     return MaterialApp(
       title: "thoughts down",
       theme: ThemeData(
@@ -68,6 +75,9 @@ class ThoughtsDownHomePage extends StatefulWidget {
 
 class _ThoughtsDownHomePageState extends State<ThoughtsDownHomePage> {
   int _selectedIndex = 0;
+
+  @override
+  void initState() {}
 
   @override
   Widget build(BuildContext context) {
