@@ -47,4 +47,10 @@ class Sqflite {
       );
     });
   }
+
+  Future<void> deleteAll() async {
+    print("delete all data!!!!");
+    final db = await _database;
+    await db.delete('thought', where: 'id>=0');
+  }
 }

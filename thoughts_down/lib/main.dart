@@ -1,16 +1,20 @@
 import 'package:flutter/material.dart';
-import 'thought/thought.dart';
-import 'thought/add_thought.dart';
-import 'package:path/path.dart';
-import 'package:flutter/widgets.dart';
-import 'package:provider/provider.dart';
-import 'package:sqflite/sqflite.dart';
 import 'package:thoughts_down/thought/thought.dart';
 import 'dart:async';
 
 // Future<Database> _database;
 void main() {
-  runApp(const ThoughtsDownApp());
+  //TODO 初始时删除所有的数据
+  // sqfliteInstance.deleteAll();
+  //预加载数据库数据
+  thoughtManager.refresh();
+  //
+  Future.delayed(
+      const Duration(seconds: 1),
+      () => {
+            print("begin to start APP"),
+            runApp(const ThoughtsDownApp()),
+          });
 }
 
 class ThoughtsDownApp extends StatelessWidget {
@@ -48,7 +52,7 @@ class ThoughtsDownApp extends StatelessWidget {
       // home: const ThoughtsDownHomePage(),
       routes: {
         '/': (context) => const ThoughtsDownHomePage(),
-        '/thoughtsEdit': (context) => ThoughtsEditHomePage(),
+        '/thoughtsEdit': (context) => const ThoughtsEditHomePage(),
       },
     );
   }
