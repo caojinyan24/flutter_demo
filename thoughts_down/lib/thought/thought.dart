@@ -44,6 +44,7 @@ class _ThoughtsDisplayPage extends State<ThoughtsDisplayPage>
               style: const TextStyle(color: Colors.blue, fontSize: 12),
               softWrap: true,
               textAlign: TextAlign.start,
+              overflow: TextOverflow.visible,
             ),
           ),
         ],
@@ -80,32 +81,11 @@ class _ThoughtsDisplayPage extends State<ThoughtsDisplayPage>
   }
 }
 
-class Thought extends StatelessWidget {
-  const Thought({
-    required this.createTime,
-    required this.text,
-    Key? key,
-  }) : super(key: key);
-  final String text;
-  final String createTime;
+class Thought {
+  String text;
+  String createTime;
 
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        // const Divider(height: 10.0),
-        const Padding(padding: EdgeInsets.all(3)),
-        Text(createTime,
-            // style: const TextStyle(decoration: TextDecoration.underline),
-            textAlign: TextAlign.start),
-        Text(
-          text,
-          style: const TextStyle(
-              color: Colors.blue, fontStyle: FontStyle.normal, fontSize: 20),
-        )
-      ],
-    );
-  }
+  Thought(this.createTime, this.text);
 
   static String convertTime(DateTime time) {
     return time.year.toString() +
@@ -198,7 +178,7 @@ class ThoughtManager {
     List<Thought> result = [];
     List<ThoughtModel> thoughts = await sqfliteInstance.thoughts();
     for (ThoughtModel item in thoughts) {
-      result.add(Thought(createTime: item.createTime, text: item.text));
+      result.add(Thought(item.createTime, item.text));
     }
     return result;
   }
