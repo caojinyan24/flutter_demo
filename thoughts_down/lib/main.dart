@@ -1,20 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:thoughts_down/thought/thought.dart';
 import 'dart:async';
+import 'package:thoughts_down/common/variable.dart';
 
-// Future<Database> _database;
 void main() {
-  //TODO 初始时删除所有的数据
-  // sqfliteInstance.deleteAll();
-  //预加载数据库数据
-  thoughtManager.refresh();
-  //
-  Future.delayed(
-      const Duration(seconds: 1),
-      () => {
-            print("begin to start APP"),
-            runApp(const ThoughtsDownApp()),
-          });
+  // sqfliteInstance.deleteAll();  //TODO 初始时删除所有的数据
+  runApp(const ThoughtsDownApp());
 }
 
 class ThoughtsDownApp extends StatelessWidget {
@@ -24,26 +15,6 @@ class ThoughtsDownApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    // return MaterialApp(
-    //   return MultiProvider(
-    //       providers: [
-    //         Provider(create: (context) => const ThoughtsDownHomePage()),
-    //         Provider(create: (context) => ThoughtsEditHomePage()),
-    //       ],
-    //
-    //       child: MaterialApp(
-    //           title: 'thoughts down',
-    //           theme: ThemeData(
-    //             primarySwatch: Colors.blue,
-    //           ),
-    //
-    //           // home: const ThoughtsDownHomePage(),
-    //           routes: {
-    //             '/': (context) => const ThoughtsDownHomePage(),
-    //             '/thoughtsEdit': (context) => ThoughtsEditHomePage(),
-    //           }));
-    // }
-
     return MaterialApp(
       title: "thoughts down",
       theme: ThemeData(
@@ -81,7 +52,9 @@ class _ThoughtsDownHomePageState extends State<ThoughtsDownHomePage> {
   int _selectedIndex = 0;
 
   @override
-  void initState() {}
+  void initState() {
+    // thoughtManager.refresh();
+  }
 
   @override
   Widget build(BuildContext context) {

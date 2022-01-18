@@ -34,12 +34,16 @@ class Sqflite {
       "create_time": thought.createTime,
       "text": thought.text
     };
-    return await db.insert("thought", param);
+    int data = await db.insert("thought", param);
+    print("insert data:" + thought.text);
+    return data;
   }
 
   Future<List<ThoughtModel>> thoughts() async {
     final db = await _database;
-    final List<Map<String, dynamic>> maps = await db.query('thought');
+    final List<Map<String, dynamic>> maps =
+        await db.query('thought', orderBy: "id desc");
+    print("fetch all data:");
     return List.generate(maps.length, (i) {
       return ThoughtModel(
         maps[i]['create_time'],

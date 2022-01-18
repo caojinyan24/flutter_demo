@@ -3,7 +3,6 @@ import 'package:thoughts_down/persist/db_model.dart';
 import 'package:thoughts_down/common/variable.dart';
 import 'package:thoughts_down/common/datetime.dart';
 
-
 class ThoughtsDisplayPage extends StatefulWidget {
   const ThoughtsDisplayPage({Key? key}) : super(key: key);
 
@@ -14,19 +13,69 @@ class ThoughtsDisplayPage extends StatefulWidget {
 class _ThoughtsDisplayPage extends State<ThoughtsDisplayPage>
     with TickerProviderStateMixin {
   @override
-  Widget build(BuildContext context) {
-    thoughtManager.refresh();
-    return Row(
-      children: [
-        Flexible(
-          child: ListView.builder(
-            itemBuilder: (_, index) => thoughtManager.savedThoughts[index],
-            itemCount: thoughtManager.savedThoughts.length,
+  void initState() {
+    super.initState();
+    print("init state");
+  }
+
+  List<Widget> getThoughtsData(List<Thought>? thoughts) {
+    List<Widget> result = [];
+    if (thoughts == null) {
+      return result;
+    }
+    for (int i = 0; i < thoughts.length; i++) {
+      result.add(Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(top: 10),
+            child: Text(
+              thoughts[i].createTime,
+              style: const TextStyle(color: Colors.black, fontSize: 10),
+            ),
           ),
-          // Center is a layout widget. It takes a single child and positions it
-          // in the middle of the parent.
-        ),
-      ],
+        ],
+      ));
+      result.add(Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(top: 10),
+            child: Text(
+              thoughts[i].text,
+              style: const TextStyle(color: Colors.blue, fontSize: 12),
+              softWrap: true,
+              textAlign: TextAlign.start,
+            ),
+          ),
+        ],
+      ));
+    }
+    print("length=" + thoughts.length.toString());
+    return result;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    Future<List<Thought>> loadDatas =
+        thoughtManager.getThoughts(); // to make the list refresh everytime
+    print("loadDatas...");
+    return FutureBuilder<List<Thought>>(
+      future: loadDatas,
+      builder: (BuildContext context, AsyncSnapshot<List<Thought>> snapshot) {
+        List<Widget> widgetChildren;
+        if (snapshot.hasData) {
+          print("has data");
+          widgetChildren = getThoughtsData(snapshot.data);
+        } else if (snapshot.hasError) {
+          print("has error");
+          widgetChildren = <Widget>[const Text("error!")];
+        } else {
+          print("waiting");
+          widgetChildren = [const Text("waiting...")];
+        }
+        return Column(
+          children: widgetChildren,
+        );
+      },
     );
   }
 }
@@ -45,23 +94,15 @@ class Thought extends StatelessWidget {
     return Row(
       children: [
         // const Divider(height: 10.0),
-        Expanded(
-            child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(createTime),
-            Container(
-              margin: const EdgeInsets.only(top: 5),
-              child: Text(
-                text,
-                style: const TextStyle(
-                    color: Colors.blue,
-                    fontStyle: FontStyle.normal,
-                    fontSize: 20),
-              ),
-            )
-          ],
-        )),
+        const Padding(padding: EdgeInsets.all(3)),
+        Text(createTime,
+            // style: const TextStyle(decoration: TextDecoration.underline),
+            textAlign: TextAlign.start),
+        Text(
+          text,
+          style: const TextStyle(
+              color: Colors.blue, fontStyle: FontStyle.normal, fontSize: 20),
+        )
       ],
     );
   }
@@ -75,7 +116,6 @@ class Thought extends StatelessWidget {
   }
 }
 
-
 class ThoughtsEditHomePage extends StatelessWidget {
   const ThoughtsEditHomePage({Key? key}) : super(key: key);
 
@@ -84,10 +124,10 @@ class ThoughtsEditHomePage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
           title: Row(
-            children: const [
-              Text("thoughts edit"),
-            ],
-          )),
+        children: const [
+          Text("thoughts edit"),
+        ],
+      )),
       body: const ThoughtsEditState(),
     );
   }
@@ -129,6 +169,7 @@ class _ThoughtsEditState extends State<ThoughtsEditState> {
             border: OutlineInputBorder(),
           ),
           controller: _controller,
+          autofocus: true,
         ),
         ElevatedButton(
           child: const Text("Done!"),
@@ -141,42 +182,24 @@ class _ThoughtsEditState extends State<ThoughtsEditState> {
   void _submitThoughtsData() {
     setState(() {
       ThoughtModel thought =
-      ThoughtModel(formatter.format(DateTime.now()), _controller.text);
-      thoughtManager.savedThoughts.add(Thought(
-          createTime: formatter.format(DateTime.now()),
-          text: _controller.text));
+          ThoughtModel(formatter.format(DateTime.now()), _controller.text);
       sqfliteInstance.insertThought(thought);
     });
     Navigator.pop(context);
   }
 }
 
-
-
-
 var thoughtManager = ThoughtManager();
 
 class ThoughtManager {
   List<Thought> savedThoughts = [];
 
-  ThoughtManager() {
-    print("init Thought list");
-    getThoughtList();
-  }
-
-  void getThoughtList() {
+  Future<List<Thought>> getThoughts() async {
     List<Thought> result = [];
-    Future<List<ThoughtModel>> thoughts = sqfliteInstance.thoughts();
-    thoughts.then((value) => {
-      for (ThoughtModel item in value)
-        {
-          result.add(Thought(createTime: item.createTime, text: item.text)),
-        },
-      savedThoughts = result,
-    });
-  }
-
-  void refresh() {
-    getThoughtList();
+    List<ThoughtModel> thoughts = await sqfliteInstance.thoughts();
+    for (ThoughtModel item in thoughts) {
+      result.add(Thought(createTime: item.createTime, text: item.text));
+    }
+    return result;
   }
 }
