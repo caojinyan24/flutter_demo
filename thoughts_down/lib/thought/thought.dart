@@ -24,31 +24,28 @@ class _ThoughtsDisplayPage extends State<ThoughtsDisplayPage>
       return result;
     }
     for (int i = 0; i < thoughts.length; i++) {
-      result.add(Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(top: 10),
-            child: Text(
-              thoughts[i].createTime,
-              style: const TextStyle(color: Colors.black, fontSize: 10),
-            ),
-          ),
-        ],
+      result.add(ListTile(
+          title: Text(
+        thoughts[i].createTime,
+        style: const TextStyle(color: Colors.black, fontSize: 10),
+      ),
+        subtitle:Text(
+          thoughts[i].text,
+          style: const TextStyle(color: Colors.blue, fontSize: 12),
+          softWrap: true,
+          // textAlign: TextAlign.start,
+          overflow: TextOverflow.visible,
+        ) ,
+          minVerticalPadding:0,
+          horizontalTitleGap:0,
       ));
-      result.add(Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(top: 10),
-            child: Text(
-              thoughts[i].text,
-              style: const TextStyle(color: Colors.blue, fontSize: 12),
-              softWrap: true,
-              textAlign: TextAlign.start,
-              overflow: TextOverflow.visible,
-            ),
-          ),
-        ],
-      ));
+      // result.add(Text(
+      //   thoughts[i].text,
+      //   style: const TextStyle(color: Colors.blue, fontSize: 12),
+      //   softWrap: true,
+      //   // textAlign: TextAlign.start,
+      //   overflow: TextOverflow.visible,
+      // ));
     }
     print("length=" + thoughts.length.toString());
     return result;
@@ -73,7 +70,7 @@ class _ThoughtsDisplayPage extends State<ThoughtsDisplayPage>
           print("waiting");
           widgetChildren = [const Text("waiting...")];
         }
-        return Column(
+        return ListView(
           children: widgetChildren,
         );
       },
