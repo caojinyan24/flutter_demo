@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:thoughts_down/thought/thought.dart';
-import 'dart:async';
-import 'package:thoughts_down/common/variable.dart';
 
 void main() {
-  // sqfliteInstance.deleteAll();  //TODO 初始时删除所有的数据
+  // //---------->TODO 初始时删除所有的数据
+  // sqfliteInstance.deleteAll();
+  // fileProcessor.writeData("");
+  // //<----------TODO 初始时删除所有的数据
   runApp(const ThoughtsDownApp());
 }
 

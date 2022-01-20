@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:thoughts_down/persist/db_model.dart';
 import 'package:thoughts_down/common/variable.dart';
 import 'package:thoughts_down/common/datetime.dart';
+import 'package:thoughts_down/persist/file.dart';
 
 class ThoughtsDisplayPage extends StatefulWidget {
   const ThoughtsDisplayPage({Key? key}) : super(key: key);
@@ -12,11 +13,11 @@ class ThoughtsDisplayPage extends StatefulWidget {
 
 class _ThoughtsDisplayPage extends State<ThoughtsDisplayPage>
     with TickerProviderStateMixin {
-  @override
-  void initState() {
-    super.initState();
-    print("init state");
-  }
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   print("init state");
+  // }
 
   List<Widget> getThoughtsData(List<Thought>? thoughts) {
     List<Widget> result = [];
@@ -25,27 +26,20 @@ class _ThoughtsDisplayPage extends State<ThoughtsDisplayPage>
     }
     for (int i = 0; i < thoughts.length; i++) {
       result.add(ListTile(
-          title: Text(
-        thoughts[i].createTime,
-        style: const TextStyle(color: Colors.black, fontSize: 10),
-      ),
-        subtitle:Text(
+        title: Text(
+          thoughts[i].createTime,
+          style: const TextStyle(color: Colors.black, fontSize: 10),
+        ),
+        subtitle: Text(
           thoughts[i].text,
           style: const TextStyle(color: Colors.blue, fontSize: 12),
           softWrap: true,
           // textAlign: TextAlign.start,
           overflow: TextOverflow.visible,
-        ) ,
-          minVerticalPadding:0,
-          horizontalTitleGap:0,
+        ),
+        minVerticalPadding: 0,
+        horizontalTitleGap: 0,
       ));
-      // result.add(Text(
-      //   thoughts[i].text,
-      //   style: const TextStyle(color: Colors.blue, fontSize: 12),
-      //   softWrap: true,
-      //   // textAlign: TextAlign.start,
-      //   overflow: TextOverflow.visible,
-      // ));
     }
     print("length=" + thoughts.length.toString());
     return result;
@@ -161,6 +155,8 @@ class _ThoughtsEditState extends State<ThoughtsEditState> {
       ThoughtModel thought =
           ThoughtModel(formatter.format(DateTime.now()), _controller.text);
       sqfliteInstance.insertThought(thought);
+      print("add file data");
+      fileProcessor.appendData("\n" + thought.createTime + "\n" + thought.text);
     });
     Navigator.pop(context);
   }
