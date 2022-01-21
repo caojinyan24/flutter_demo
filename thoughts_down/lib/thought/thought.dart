@@ -3,6 +3,7 @@ import 'package:thoughts_down/persist/db_model.dart';
 import 'package:thoughts_down/common/variable.dart';
 import 'package:thoughts_down/common/datetime.dart';
 import 'package:thoughts_down/persist/file.dart';
+import 'package:thoughts_down/common/file.dart';
 
 class ThoughtsDisplayPage extends StatefulWidget {
   const ThoughtsDisplayPage({Key? key}) : super(key: key);
@@ -146,6 +147,11 @@ class _ThoughtsEditState extends State<ThoughtsEditState> {
           child: const Text("Done!"),
           onPressed: _submitThoughtsData,
         ),
+        ElevatedButton(
+            onPressed: () {
+              fileUploader.selectFiles();
+            },
+            child: const Text("select images")),
       ],
     );
   }

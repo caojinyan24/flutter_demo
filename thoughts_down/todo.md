@@ -1,3 +1,14 @@
+# 2022-01-20
+1. 日志增加
+2. 输入框富文本
+3. 图片上传---image_pickers：https://pub.dev/packages/image_pickers
+
+编辑页面
+1. 上传照片（不实际存储，使用照片的引用路径+照片名字）
+2. 编辑框使用富文本，支持上传图片
+
+version 相关介绍：https://dart.dev/tools/pub/dependencies#version-constraints
+??命名：什么时候下划线？
 # 2022-01-19
 文件保存（使用json or 所见即所得），暂时所见即所得，只做备份使用
 # 2022-01-18
