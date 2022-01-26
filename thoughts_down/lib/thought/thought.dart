@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:thoughts_down/persist/db_model.dart';
-import 'package:thoughts_down/common/variable.dart';
+import 'package:thoughts_down/persist/sqflite.dart';
 import 'package:thoughts_down/common/datetime.dart';
 import 'package:thoughts_down/persist/file.dart';
 import 'package:thoughts_down/common/file.dart';
@@ -14,18 +14,14 @@ class ThoughtsDisplayPage extends StatefulWidget {
 
 class _ThoughtsDisplayPage extends State<ThoughtsDisplayPage>
     with TickerProviderStateMixin {
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   print("init state");
-  // }
-
   List<Widget> getThoughtsData(List<Thought>? thoughts) {
     List<Widget> result = [];
     if (thoughts == null) {
       return result;
     }
+
     for (int i = 0; i < thoughts.length; i++) {
+      List<String> imagePaths = [];
       result.add(ListTile(
         title: Text(
           thoughts[i].createTime,
@@ -41,6 +37,13 @@ class _ThoughtsDisplayPage extends State<ThoughtsDisplayPage>
         minVerticalPadding: 0,
         horizontalTitleGap: 0,
       ));
+      if (thoughts[i].imagePathsStr != null &&
+          thoughts[i].imagePathsStr!.isNotEmpty) {
+        imagePaths = thoughts[i].imagePathsStr!.split(",");
+        for (int i = 0; i < imagePaths.length; i++) {
+          result.add(Image.asset(fileProcessor.tailorImagePath(imagePaths[i])));
+        }
+      }
     }
     print("length=" + thoughts.length.toString());
     return result;
@@ -76,8 +79,9 @@ class _ThoughtsDisplayPage extends State<ThoughtsDisplayPage>
 class Thought {
   String text;
   String createTime;
+  String? imagePathsStr;
 
-  Thought(this.createTime, this.text);
+  Thought(this.createTime, this.text, this.imagePathsStr);
 
   static String convertTime(DateTime time) {
     return time.year.toString() +
@@ -115,6 +119,7 @@ class ThoughtsEditState extends StatefulWidget {
 class _ThoughtsEditState extends State<ThoughtsEditState> {
   final _controller = TextEditingController();
   String textInput = "";
+  List<String> imagePathList = [];
 
   @override
   void initState() {
@@ -136,33 +141,47 @@ class _ThoughtsEditState extends State<ThoughtsEditState> {
   Widget build(BuildContext context) {
     return Column(
       children: [
+        ElevatedButton(
+            onPressed: () {
+              Future<List<String?>> files = fileUploader.selectFiles();
+              files.then((value) => {
+                    for (int i = 0; i < value.length; i++)
+                      {
+                        if (value[i] != null) {imagePathList.add(value[i]!)}
+                      }
+                  });
+            },
+            child: const Text("select images")),
         TextField(
           decoration: const InputDecoration(
             border: OutlineInputBorder(),
           ),
           controller: _controller,
           autofocus: true,
+          maxLines: 10000,
+          minLines: 1,
+          keyboardType: TextInputType.multiline,
         ),
         ElevatedButton(
           child: const Text("Done!"),
           onPressed: _submitThoughtsData,
         ),
-        ElevatedButton(
-            onPressed: () {
-              fileUploader.selectFiles();
-            },
-            child: const Text("select images")),
       ],
     );
   }
 
   void _submitThoughtsData() {
     setState(() {
-      ThoughtModel thought =
-          ThoughtModel(formatter.format(DateTime.now()), _controller.text);
+      print("imagePathList" + imagePathList.toString());
+      ThoughtModel thought = ThoughtModel(formatter.format(DateTime.now()),
+          _controller.text, imagePathList.join(","));
+      print("thoughts=" + thought.toMap().toString());
       sqfliteInstance.insertThought(thought);
       print("add file data");
-      fileProcessor.appendData("\n" + thought.createTime + "\n" + thought.text);
+      fileProcessor
+          .appendData("\n" + thought.createTime + "\n" + thought.text + "\n");
+      fileProcessor.appendData("<filePath>$imagePathList</filePath>\n");
+      imagePathList = [];
     });
     Navigator.pop(context);
   }
@@ -177,7 +196,7 @@ class ThoughtManager {
     List<Thought> result = [];
     List<ThoughtModel> thoughts = await sqfliteInstance.thoughts();
     for (ThoughtModel item in thoughts) {
-      result.add(Thought(item.createTime, item.text));
+      result.add(Thought(item.createTime, item.text, item.imagePathsStr));
     }
     return result;
   }

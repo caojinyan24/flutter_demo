@@ -22,4 +22,12 @@ class FileProcessor {
     File f = await _file;
     f.writeAsStringSync(data);
   }
+
+  String tailorImagePath(String path) {
+    String platform = "OS"; //todo 完善
+    if (path.startsWith("/Volumes/Macintosh HD")) {
+      return path.replaceAll("/Volumes/Macintosh HD", "");
+    }
+    return path;
+  }
 }

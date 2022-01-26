@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:thoughts_down/thought/thought.dart';
-
+import 'package:thoughts_down/persist/sqflite.dart';
+import 'package:thoughts_down/persist/file.dart';
 void main() {
   // //---------->TODO 初始时删除所有的数据
   // sqfliteInstance.deleteAll();
