@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:thoughts_down/persist/db_model.dart';
 import 'package:thoughts_down/persist/sqflite.dart';
@@ -45,7 +47,7 @@ class _ThoughtsDisplayPage extends State<ThoughtsDisplayPage>
         }
       }
     }
-    print("length=" + thoughts.length.toString());
+    log("length=" + thoughts.length.toString());
     return result;
   }
 
@@ -53,19 +55,19 @@ class _ThoughtsDisplayPage extends State<ThoughtsDisplayPage>
   Widget build(BuildContext context) {
     Future<List<Thought>> loadDatas =
         thoughtManager.getThoughts(); // to make the list refresh everytime
-    print("loadDatas...");
+    log("loadDatas...");
     return FutureBuilder<List<Thought>>(
       future: loadDatas,
       builder: (BuildContext context, AsyncSnapshot<List<Thought>> snapshot) {
         List<Widget> widgetChildren;
         if (snapshot.hasData) {
-          print("has data");
+          log("has data");
           widgetChildren = getThoughtsData(snapshot.data);
         } else if (snapshot.hasError) {
-          print("has error");
+          log("has error");
           widgetChildren = <Widget>[const Text("error!")];
         } else {
-          print("waiting");
+          log("waiting");
           widgetChildren = [const Text("waiting...")];
         }
         return ListView(
@@ -172,12 +174,12 @@ class _ThoughtsEditState extends State<ThoughtsEditState> {
 
   void _submitThoughtsData() {
     setState(() {
-      print("imagePathList" + imagePathList.toString());
+      log("imagePathList" + imagePathList.toString());
       ThoughtModel thought = ThoughtModel(formatter.format(DateTime.now()),
           _controller.text, imagePathList.join(","));
-      print("thoughts=" + thought.toMap().toString());
+      log("thoughts=" + thought.toMap().toString());
       sqfliteInstance.insertThought(thought);
-      print("add file data");
+      log("add file data");
       fileProcessor
           .appendData("\n" + thought.createTime + "\n" + thought.text + "\n");
       fileProcessor.appendData("<filePath>$imagePathList</filePath>\n");

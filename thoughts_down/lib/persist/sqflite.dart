@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:flutter/widgets.dart';
 
@@ -40,7 +41,7 @@ class Sqflite {
       "image_paths_str": thought.imagePathsStr!,
     };
     int data = await db.insert("thought", param);
-    print("insert data:" + thought.text + thought.imagePathsStr!);
+    log("insert data:" + thought.text + thought.imagePathsStr!);
     return data;
   }
 
@@ -48,7 +49,7 @@ class Sqflite {
     final db = await _database;
     final List<Map<String, dynamic>> maps =
         await db.query('thought', orderBy: "id desc");
-    print("fetch all data:");
+    log("fetch all data:");
     return List.generate(maps.length, (i) {
       return ThoughtModel(
         maps[i]['create_time'],
@@ -59,7 +60,7 @@ class Sqflite {
   }
 
   Future<void> deleteAll() async {
-    print("delete all data!!!!");
+    log("delete all data!!!!");
     final db = await _database;
     await db.delete('thought', where: 'id>=0');
   }
