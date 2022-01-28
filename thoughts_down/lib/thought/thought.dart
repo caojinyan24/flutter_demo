@@ -6,6 +6,7 @@ import 'package:thoughts_down/persist/sqflite.dart';
 import 'package:thoughts_down/common/datetime.dart';
 import 'package:thoughts_down/persist/file.dart';
 import 'package:thoughts_down/common/file.dart';
+import 'dart:io';
 
 class ThoughtsDisplayPage extends StatefulWidget {
   const ThoughtsDisplayPage({Key? key}) : super(key: key);
@@ -43,7 +44,8 @@ class _ThoughtsDisplayPage extends State<ThoughtsDisplayPage>
           thoughts[i].imagePathsStr!.isNotEmpty) {
         imagePaths = thoughts[i].imagePathsStr!.split(",");
         for (int i = 0; i < imagePaths.length; i++) {
-          result.add(Image.asset(fileProcessor.tailorImagePath(imagePaths[i])));
+          result.add(
+              Image.file(File(fileProcessor.tailorImagePath(imagePaths[i]))));
         }
       }
     }
