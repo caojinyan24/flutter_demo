@@ -2,3 +2,7 @@
 **/ios
 **/web
 **/macos
+**/.idea
+**/.dart_tool
+**/.DS_Store
+**/.packages
